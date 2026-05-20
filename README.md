@@ -80,7 +80,7 @@ drowsyguard/
 │   ├── haarcascade_eye.xml
 │   └── haarcascade_smile.xml
 │
-└── mrleyedataset/
+└── mrleyedataset/      ← download the mrleyedataset from kaggle
     ├── Close-Eyes/
     └── Open-Eyes/
 ## Setup
