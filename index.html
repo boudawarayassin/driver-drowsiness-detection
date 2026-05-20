@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>DrowsyGuard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/style.css"/>
+</head>
+<body>
+  <div class="scanline"></div>
+
+  <div class="app">
+    <header class="header">
+      <div class="brand">
+        <div class="brand-mark">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <ellipse cx="12" cy="12" rx="11" ry="7"/>
+            <circle cx="12" cy="12" r="3"/>
+            <line x1="12" y1="5" x2="12" y2="2"/>
+            <line x1="12" y1="22" x2="12" y2="19"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-name">DROWSYGUARD</div>
+          <div class="brand-sub">Driver Safety System v2.0</div>
+        </div>
+      </div>
+
+      <div class="header-meta">
+        <div class="meta-chip" id="chip-fps">-- FPS</div>
+        <div class="meta-chip" id="chip-time">00:00</div>
+        <div class="connection-badge" id="conn-badge">
+          <span class="conn-dot"></span>
+          <span id="conn-label">OFFLINE</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="workspace">
+
+      <!-- LEFT: camera + controls -->
+      <div class="left-col">
+        <div class="camera-card">
+          <div class="card-header">
+            <span>CAMERA FEED</span>
+            <div class="cam-btns">
+              <button id="btn-start" class="btn-primary" onclick="startSession()">▶ START</button>
+              <button id="btn-stop"  class="btn-danger"  onclick="stopSession()" disabled>■ STOP</button>
+            </div>
+          </div>
+
+          <div class="camera-body" id="camera-body">
+            <div class="idle-screen" id="idle-screen">
+              <div class="idle-eye">
+                <svg width="56" height="36" viewBox="0 0 56 36" fill="none">
+                  <ellipse cx="28" cy="18" rx="27" ry="17" stroke="currentColor" stroke-width="2"/>
+                  <circle  cx="28" cy="18" r="8" stroke="currentColor" stroke-width="2"/>
+                  <circle  cx="28" cy="18" r="3" fill="currentColor"/>
+                </svg>
+              </div>
+              <p>Press START to begin</p>
+            </div>
+            <img id="video-img" class="video-img hidden" alt="feed"/>
+
+            <!-- corner brackets -->
+            <div class="bracket tl"></div>
+            <div class="bracket tr"></div>
+            <div class="bracket bl"></div>
+            <div class="bracket br"></div>
+          </div>
+        </div>
+
+        <!-- Alert strip -->
+        <div class="alert-strip hidden" id="alert-strip">
+          <span class="alert-icon">⚠</span>
+          DROWSINESS DETECTED — PULL OVER NOW
+          <span class="alert-icon">⚠</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: dashboard -->
+      <div class="right-col">
+
+        <!-- Status -->
+        <div class="dash-card status-card">
+          <div class="card-header"><span>DRIVER STATUS</span></div>
+          <div class="status-body">
+            <div class="status-orb" id="status-orb">
+              <div class="orb-text" id="status-text">--</div>
+              <div class="orb-label">STATUS</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Drowsiness meter -->
+        <div class="dash-card">
+          <div class="card-header"><span>DROWSINESS LEVEL</span></div>
+          <div class="meter-body">
+            <div class="meter-row">
+              <span class="meter-tag">EYES</span>
+              <div class="meter-track">
+                <div class="meter-bar" id="eye-bar"></div>
+              </div>
+              <span class="meter-val" id="eye-val">0</span>
+            </div>
+            <div class="meter-row">
+              <span class="meter-tag">YAWN</span>
+              <div class="meter-track">
+                <div class="meter-bar yawn" id="yawn-bar"></div>
+              </div>
+              <span class="meter-val" id="yawn-val">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Eye tracking -->
+        <div class="dash-card">
+          <div class="card-header"><span>EYE TRACKING</span></div>
+          <div class="eyes-body">
+            <div class="eye-item">
+              <div class="eye-gfx" id="gfx-left"><div class="eye-pupil"></div></div>
+              <div class="eye-data">
+                <div class="eye-side">LEFT</div>
+                <div class="eye-status" id="st-left">--</div>
+              </div>
+            </div>
+            <div class="eye-sep"></div>
+            <div class="eye-item">
+              <div class="eye-gfx" id="gfx-right"><div class="eye-pupil"></div></div>
+              <div class="eye-data">
+                <div class="eye-side">RIGHT</div>
+                <div class="eye-status" id="st-right">--</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="dash-card">
+          <div class="card-header"><span>SESSION STATS</span></div>
+          <div class="stats-body">
+            <div class="stat-box">
+              <div class="stat-num" id="st-alerts">0</div>
+              <div class="stat-lbl">ALERTS</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num" id="st-fps">--</div>
+              <div class="stat-lbl">FPS</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num">99%</div>
+              <div class="stat-lbl">ACCURACY</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num" id="st-time">00:00</div>
+              <div class="stat-lbl">SESSION</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Event log -->
+        <div class="dash-card log-card">
+          <div class="card-header"><span>EVENT LOG</span></div>
+          <div class="log-body" id="log-body">
+            <div class="log-empty">No events yet</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
